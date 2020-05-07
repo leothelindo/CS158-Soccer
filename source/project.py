@@ -1,8 +1,13 @@
+"""
+Author      : Nam Tran, Leonardo Lindo, and Kyle Grace
+Class       : HMC CS 158
+Date        : 2020 May 12
+Description : Soccer Match Winner Predictions
+"""
 
-# 
 """ !conda update scikit-learn """
 
-#import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from sklearn.datasets import fetch_mldata
 from sklearn.neural_network import MLPClassifier
 

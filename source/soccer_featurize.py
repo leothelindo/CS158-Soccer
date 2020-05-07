@@ -1,8 +1,8 @@
 """
-Author      : Nam Tran and Leonardo Lindo
+Author      : Nam Tran, Leonardo Lindo, and Kyle Grace
 Class       : HMC CS 158
-Date        : 2020 Feb 27
-Description : Survival of ICU Patients
+Date        : 2020 May 12
+Description : Soccer Match Winner Predictions
 
 This code is adapted from course material by Jenna Wiens (UMichigan).
 """
@@ -35,7 +35,7 @@ import yaml
 config = yaml.safe_load(open('config.yaml'))
 
 # project-specific helper libraries
-import icu_config
+import soccer_config
 import tests
 
 
@@ -49,12 +49,12 @@ RANDOM_SEED = 3     # seed for train_test_split
 
 ### ========== TODO : START ========== ###
 # after part a : change to 2500 records
-NRECORDS = 2500        # number of patient records
+NRECORDS = 3733     # number of match records
 ### ========== TODO : END ========== ###
 
 FEATURES_TRAIN_FILENAME, LABELS_TRAIN_FILENAME, \
     FEATURES_TEST_FILENAME, LABELS_TEST_FILENAME = \
-        icu_config.get_filenames(nrecords=NRECORDS, test_data=True)
+        soccer_config.get_filenames(nrecords=NRECORDS, test_data=True)
 
 
 
@@ -78,9 +78,9 @@ def get_raw_data(path, n=None) :
     --------------------
     df_features : pandas DataFrame of shape (?,3)
         Features.
-        The number of rows depends on the number of values per patient.
+        The number of rows depends on the number of values per match.
         columns:
-            RecordID (int)
+            MatchID (int)
             Time (object)
             Variable (object)
             Value (float)
@@ -88,8 +88,8 @@ def get_raw_data(path, n=None) :
     df_labels : pandas DataFrame of shape (n_samples,3)
         Labels.
         columns:
-            RecordID (int)
-            In-hospital_death (int, -1 for survived, +1 for died)
+            MatchID (int)
+            Outcome (int, -1 for survived, +1 for died)
             30-day_mortality (int, -1 for survived, +1 for died)
     """
     
@@ -97,13 +97,13 @@ def get_raw_data(path, n=None) :
     df_labels = pd.read_csv(os.path.join(path, 'labels.csv'))
     if n is not None :
         df_labels = df_labels[:n]
-    ids = df_labels['RecordID']
+    ids = df_labels['MatchID']
     
     # read features
     data = []
     for i in tqdm(ids, desc='Loading files from disk'):
         df = pd.read_csv(os.path.join(path, f'files/{i}.csv'))
-        df.insert(0, 'RecordID', i)     # add RecordID
+        df.insert(0, 'MatchID', i)     # add MatchID
         data.append(df)
     df_features = pd.concat(data, axis=0, ignore_index=True)
     
@@ -116,7 +116,7 @@ def get_raw_data(path, n=None) :
 ######################################################################
 
 class Vectorizer(BaseEstimator, TransformerMixin):
-    """Convert a patient record to matrix (numpy array) of feature values."""
+    """Convert a match record to matrix (numpy array) of feature values."""
     
     def __init__(self) :        
         pass
@@ -152,7 +152,7 @@ class Vectorizer(BaseEstimator, TransformerMixin):
         features = {}
         
         ### ========== TODO : START ========== ###
-        # part a : feature data record of one patient
+        # part a : feature data record of one match
         # implement in sandbox below, then copy-paste here
         static_vars = config['static']
         timeseries_vars = config['timeseries']
@@ -192,9 +192,9 @@ class Vectorizer(BaseEstimator, TransformerMixin):
         """
         
         df = X
-        ids = df['RecordID'].unique()
+        ids = df['MatchID'].unique()
         
-        features = Parallel(n_jobs=NJOBS)(delayed(self._process_record)(df[df['RecordID'] == i]) for i in tqdm(ids, desc='Generating feature vectors'))
+        features = Parallel(n_jobs=NJOBS)(delayed(self._process_record)(df[df['MatchID'] == i]) for i in tqdm(ids, desc='Generating feature vectors'))
         df_features = pd.DataFrame(features).sort_index(axis=1)     # sort by feature name
         self.feature_names_ = df_features.columns.tolist()
         
@@ -223,17 +223,17 @@ class Vectorizer(BaseEstimator, TransformerMixin):
 
 # This is a sandbox for you to play around with the pandas library.
 # Uncomment this block to test, and run in interactive mode.
-#     python -i icu_featurize.py
+#     python -i soccer_featurize.py
 #
 # Test your featurization with a dataframe with one record.
 # Once correct, copy code into Vectorizer._process_record(...)
 # and recomment this block.
 
 '''
-df_features, df_labels = get_raw_data(icu_config.RAW_DATA_DIR, n=1)
+df_features, df_labels = get_raw_data(soccer_config.RAW_DATA_DIR, n=1)
 
-rid = df_labels['RecordID'][0] # 132539
-df = df_features[df_features['RecordID'] == rid]
+rid = df_labels['MatchID'][0] # 132539
+df = df_features[df_features['MatchID'] == rid]
 
 features = {}
 
@@ -280,7 +280,7 @@ def main() :
     
     print('Reading data...')
     
-    df_features, df_labels = get_raw_data(icu_config.RAW_DATA_DIR, n=NRECORDS)
+    df_features, df_labels = get_raw_data(soccer_config.RAW_DATA_DIR, n=NRECORDS)
     
     print()
     
@@ -298,10 +298,10 @@ def main() :
     feature_names = avg_vect.get_feature_names()
     
     # get labels
-    y = df_labels['In-hospital_death'].values
+    y = df_labels['Outcome'].values
     
     # get record ids
-    ids = df_labels['RecordID'].values
+    ids = df_labels['MatchID'].values
     
     print()
     
@@ -344,25 +344,25 @@ def main() :
         
     df_features = pd.DataFrame(X_train)
     df_features.columns = avg_vect.get_feature_names()
-    df_features.insert(0, 'RecordID', ids_train)
+    df_features.insert(0, 'MatchID', ids_train)
     df_features.to_csv(FEATURES_TRAIN_FILENAME, index=False)
     print(f'\{FEATURES_TRAIN_FILENAME}')
     
     df_features = pd.DataFrame(X_test)
     df_features.columns = avg_vect.get_feature_names()
-    df_features.insert(0, 'RecordID', ids_test)
+    df_features.insert(0, 'MatchID', ids_test)
     df_features.to_csv(FEATURES_TEST_FILENAME, index=False)
     print(f'\{FEATURES_TEST_FILENAME}')
     
     df_labels = pd.DataFrame(y_train)
-    df_labels.columns = ['In-hospital_death']
-    df_labels.insert(0, 'RecordID', ids_train)
+    df_labels.columns = ['Outcome']
+    df_labels.insert(0, 'MatchID', ids_train)
     df_labels.to_csv(LABELS_TRAIN_FILENAME, index=False)
     print(f'\{LABELS_TRAIN_FILENAME}')
     
     df_labels = pd.DataFrame(y_test)
-    df_labels.columns = ['In-hospital_death']
-    df_labels.insert(0, 'RecordID', ids_test)
+    df_labels.columns = ['Outcome']
+    df_labels.insert(0, 'MatchID', ids_test)
     df_labels.to_csv(LABELS_TEST_FILENAME, index=False)
     print(f'\{LABELS_TEST_FILENAME}')
 

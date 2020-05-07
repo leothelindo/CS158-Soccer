@@ -1,8 +1,8 @@
 """
-Author      : Yi-Chieh Wu
+Author      : Nam Tran, Leonardo Lindo, and Kyle Grace
 Class       : HMC CS 158
-Date        : 2020 Feb 27
-Description : Survival of ICU Patients
+Date        : 2020 May 12
+Description : Soccer Match Winner Predictions
 
 This code is adapted from course material by Jenna Wiens (UMichigan).
 """
