@@ -95,7 +95,7 @@ def remap_teams(path):
     numeric = soccer_mapping.transform()
     data['HomeTeam'] = data['HomeTeam'].map(numeric)
     data['AwayTeam'] = data['AwayTeam'].map(numeric)
-    data = data.drop(['Referee'], axis=1)
+    data = data.drop(['Referee', 'FTHG', 'FTAG', 'FTR', 'HTR'], axis=1)
     data.to_csv(os.path.join(soccer_config.PROCESSED_DATA_DIR, 'data3733_num.csv'), index=False)
     
 

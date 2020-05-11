@@ -209,7 +209,7 @@ def main():
     print('Reading data...')
     
     df_features_test = pd.read_csv(FEATURES_TEST_FILENAME)
-    X_test = df_features_test.drop('RecordID', axis=1).values
+    X_test = df_features_test.drop('MatchID', axis=1).values
     
     df_labels_test = pd.read_csv(LABELS_TEST_FILENAME)
     y_test = df_labels_test['Outcome'].values
@@ -283,7 +283,7 @@ def main():
     filename = os.path.join(soccer_config.PICKLE_DIR, f'{clf_str}_soln.joblib')
     pipe = load(filename)
     
-    feature_names = df_features_test.drop('RecordID', axis=1).columns.tolist()
+    feature_names = df_features_test.drop('MatchID', axis=1).columns.tolist()
     coef = pipe['clf'].coef_[0]
     
     ### ========== TODO : START ========== ###

@@ -183,7 +183,7 @@ class Vectorizer(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X : pandas DataFrame
-            Raw data to be featuerized.  See get_raw_data.
+            Raw data to be featurized.  See get_raw_data.
         
         Returns
         -------
@@ -194,7 +194,7 @@ class Vectorizer(BaseEstimator, TransformerMixin):
         df = X
         ids = df['MatchID'].unique()
         
-        features = Parallel(n_jobs=NJOBS)(delayed(self._process_record)(df[df['MatchID'] == i]) for i in tqdm(ids, desc='Generating feature vectors'))
+        features = Parallel(n_jobs=NJOBS)((df[df['MatchID'] == i]) for i in tqdm(ids, desc='Generating feature vectors'))
         df_features = pd.DataFrame(features).sort_index(axis=1)     # sort by feature name
         self.feature_names_ = df_features.columns.tolist()
         
@@ -282,6 +282,7 @@ def main() :
     
     # df_features, df_labels = get_raw_data(soccer_config.RAW_DATA_DIR, n=NRECORDS)
     df_features = pd.read_csv(os.path.join(soccer_config.PROCESSED_DATA_DIR, 'data3733_num.csv'))
+    df_features = df_features.drop(['MatchID'], axis=1)
     df_labels = pd.read_csv(os.path.join(soccer_config.RAW_DATA_DIR, 'labels.csv'))
     
     print()
@@ -295,11 +296,12 @@ def main() :
     # tests.test_Vectorizer(df_features, df_labels)
     
     # extract features for all records
-    # avg_vect = Vectorizer()
+    avg_vect = Vectorizer()
     # X = avg_vect.fit_transform(df_features)
     # feature_names = avg_vect.get_feature_names()
-    X = df_features
-    feature_names = df_features.columns[1:]
+    X = df_features.values
+    print(X)
+    feature_names = df_features.columns
     
     # get labels
     y = df_labels['Outcome'].values
@@ -347,13 +349,13 @@ def main() :
     print('Writing to file...')
         
     df_features = pd.DataFrame(X_train)
-    df_features.columns = df_features.columns[1:]
+    df_features.columns = feature_names
     df_features.insert(0, 'MatchID', ids_train)
     df_features.to_csv(FEATURES_TRAIN_FILENAME, index=False)
     print(f'\{FEATURES_TRAIN_FILENAME}')
     
     df_features = pd.DataFrame(X_test)
-    df_features.columns = df_features.columns[1:]
+    df_features.columns = feature_names
     df_features.insert(0, 'MatchID', ids_test)
     df_features.to_csv(FEATURES_TEST_FILENAME, index=False)
     print(f'\{FEATURES_TEST_FILENAME}')
