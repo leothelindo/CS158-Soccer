@@ -8,8 +8,8 @@ Description : Soccer Match Winner Predictions
 """ !conda update scikit-learn """
 
 # import matplotlib.pyplot as plt
-from sklearn.datasets import fetch_mldata
-from sklearn.neural_network import MLPClassifier
+# from sklearn.datasets import fetch_mldata
+# from sklearn.neural_network import MLPClassifier
 
 import csv
 from collections import *
@@ -18,14 +18,14 @@ import numpy as np
 import pandas as pd
 
 
-filename = 'data.csv'
+# filename = 'data.csv'
 
-df = pd.read_csv('data.csv', header=0)    # read the file
+# df = pd.read_csv('data.csv', header=0)    # read the file
 
-print(df)
+# print(df)
 
 
-def transform(s):
+def transform():
     """ 
     Team names to numbers
     """
@@ -37,4 +37,4 @@ def transform(s):
         'Norwich':25, 'Reading': 26, 'Southampton': 27, 'Crystal Palace': 28,
         'Cardiff':29, 'Leicester':30, 'Bournemouth':31, 'Watford':32, 'Middlesbrough':33,
         'Brighton':34, 'Huddersfield':35}
-    return d[s]
+    return d

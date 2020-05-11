@@ -133,7 +133,7 @@ class Vectorizer(BaseEstimator, TransformerMixin):
         
         return self
     
-    
+    # Do not need for soccer data
     def _process_record(self, df) :
         """Transform raw records to a feature matrix.
         
@@ -281,7 +281,7 @@ def main() :
     print('Reading data...')
     
     # df_features, df_labels = get_raw_data(soccer_config.RAW_DATA_DIR, n=NRECORDS)
-    df_features = pd.read_csv(os.path.join(soccer_config.PROCESSED_DATA_DIR, 'data3733.csv'))
+    df_features = pd.read_csv(os.path.join(soccer_config.PROCESSED_DATA_DIR, 'data3733_num.csv'))
     df_labels = pd.read_csv(os.path.join(soccer_config.RAW_DATA_DIR, 'labels.csv'))
     
     print()
@@ -295,9 +295,11 @@ def main() :
     # tests.test_Vectorizer(df_features, df_labels)
     
     # extract features for all records
-    avg_vect = Vectorizer()
-    X = avg_vect.fit_transform(df_features)
-    feature_names = avg_vect.get_feature_names()
+    # avg_vect = Vectorizer()
+    # X = avg_vect.fit_transform(df_features)
+    # feature_names = avg_vect.get_feature_names()
+    X = df_features
+    feature_names = df_features.columns[1:]
     
     # get labels
     y = df_labels['Outcome'].values
@@ -326,9 +328,9 @@ def main() :
     print('number of features (test):', d)
     
     # compute stats on training data set
-    print('number of samples missing at least one value (training):', np.count_nonzero(np.isnan(X_train).any(axis=1)))
-    print('number of features missing at least one value (training):', np.count_nonzero(np.isnan(X_train).any(axis=0)))
-    
+    # print('number of samples missing at least one value (training):', np.count_nonzero(np.isnan(X_train).any(axis=1)))
+    # print('number of features missing at least one value (training):', np.count_nonzero(np.isnan(X_train).any(axis=0)))
+    print(X_train)
     # compute average feature vector
     feature_avg = np.nanmean(X_train, axis=0)
     print('average feature vector (training):')
@@ -345,13 +347,13 @@ def main() :
     print('Writing to file...')
         
     df_features = pd.DataFrame(X_train)
-    df_features.columns = avg_vect.get_feature_names()
+    df_features.columns = df_features.columns[1:]
     df_features.insert(0, 'MatchID', ids_train)
     df_features.to_csv(FEATURES_TRAIN_FILENAME, index=False)
     print(f'\{FEATURES_TRAIN_FILENAME}')
     
     df_features = pd.DataFrame(X_test)
-    df_features.columns = avg_vect.get_feature_names()
+    df_features.columns = df_features.columns[1:]
     df_features.insert(0, 'MatchID', ids_test)
     df_features.to_csv(FEATURES_TEST_FILENAME, index=False)
     print(f'\{FEATURES_TEST_FILENAME}')

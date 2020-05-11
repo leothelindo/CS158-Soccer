@@ -34,7 +34,7 @@ import classifiers
 # globals
 ######################################################################
 
-NRECORDS = 2500     # number of patient records
+NRECORDS = 3733     # number of match records
 FEATURES_TRAIN_FILENAME, LABELS_TRAIN_FILENAME, \
     FEATURES_TEST_FILENAME, LABELS_TEST_FILENAME = \
         soccer_config.get_filenames(nrecords=NRECORDS, test_data=True)
@@ -212,7 +212,7 @@ def main():
     X_test = df_features_test.drop('RecordID', axis=1).values
     
     df_labels_test = pd.read_csv(LABELS_TEST_FILENAME)
-    y_test = df_labels_test['In-hospital_death'].values
+    y_test = df_labels_test['Outcome'].values
     
     print()
     

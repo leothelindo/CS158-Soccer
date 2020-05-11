@@ -14,6 +14,7 @@ import os
 
 # project-specific helper libraries
 import soccer_config
+import soccer_mapping
 
 def setup_ids(path):
     """
@@ -61,7 +62,7 @@ def setup_ids(path):
 
 
 
-def get_raw_data(path, n=None) :
+def get_raw_data(path, n=None):
     """
     Adds MatchID mapping to each game.
     Read raw data from <path>/labels.csv and <data>/files/*.csv, keeping only the first n examples.
@@ -86,6 +87,16 @@ def get_raw_data(path, n=None) :
     data = df.copy(deep=True)
     data.insert(0, "MatchID", ids)
     data.to_csv(os.path.join(soccer_config.PROCESSED_DATA_DIR, 'data' + str(n) + '.csv'), index=False)
+
+def remap_teams(path):
+    df = pd.read_csv(os.path.join(path, 'data3733.csv'))
+    data = df.copy(deep=True)
+
+    numeric = soccer_mapping.transform()
+    data['HomeTeam'] = data['HomeTeam'].map(numeric)
+    data['AwayTeam'] = data['AwayTeam'].map(numeric)
+    data = data.drop(['Referee'], axis=1)
+    data.to_csv(os.path.join(soccer_config.PROCESSED_DATA_DIR, 'data3733_num.csv'), index=False)
     
 
 def main():
@@ -94,8 +105,9 @@ def main():
     processed = soccer_config.PROCESSED_DATA_DIR
     NRECORDS = 3733     # number of match records
 
-    setup_ids(raw)
-    get_raw_data(raw, 3733)
+    # setup_ids(raw)
+    # get_raw_data(raw, 3733)
+    remap_teams(processed)
 
 if __name__ == '__main__':
     main()
