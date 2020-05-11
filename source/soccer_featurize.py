@@ -280,7 +280,9 @@ def main() :
     
     print('Reading data...')
     
-    df_features, df_labels = get_raw_data(soccer_config.RAW_DATA_DIR, n=NRECORDS)
+    # df_features, df_labels = get_raw_data(soccer_config.RAW_DATA_DIR, n=NRECORDS)
+    df_features = pd.read_csv(os.path.join(soccer_config.PROCESSED_DATA_DIR, 'data3733.csv'))
+    df_labels = pd.read_csv(os.path.join(soccer_config.RAW_DATA_DIR, 'labels.csv'))
     
     print()
     
@@ -290,7 +292,7 @@ def main() :
     print('Extracting features and labels...')
     
     # test feature extraction for one record
-    tests.test_Vectorizer(df_features, df_labels)
+    # tests.test_Vectorizer(df_features, df_labels)
     
     # extract features for all records
     avg_vect = Vectorizer()

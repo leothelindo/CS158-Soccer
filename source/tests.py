@@ -55,10 +55,10 @@ def test_process_record(features) :
 
 
 def test_Vectorizer(df_features, df_labels) :
-    import icu_featurize
+    import soccer_featurize
     
     rid = df_labels['RecordID'][0] # 132539
-    avg_vect = icu_featurize.Vectorizer()
+    avg_vect = soccer_featurize.Vectorizer()
     one_df = df_features[df_features['RecordID'] == rid]
     test = avg_vect.fit_transform(one_df)
     
@@ -80,11 +80,11 @@ def test_Vectorizer(df_features, df_labels) :
 
 
 ######################################################################
-# test icu_practice.py
+# test soccer_practice.py
 ######################################################################
 
 def test_score() :
-    import icu_practice
+    import soccer_practice
 
     # np.random.seed(1234)
     # y_true = 2 * np.random.randint(0,2,10) - 1
@@ -103,6 +103,6 @@ def test_score() :
     exp_scores  = [     3/10.,      4/11.,   5/12.,        2/5.,          2/6.,          1/4.]
     
     for i, metric in enumerate(metrics) :
-        test = icu_practice.score(y_true, y_pred, metric)
+        test = soccer_practice.score(y_true, y_pred, metric)
         np.testing.assert_almost_equal(test, exp_scores[i])
 

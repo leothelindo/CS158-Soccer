@@ -37,9 +37,9 @@ import yaml
 config = yaml.safe_load(open('config.yaml'))
 
 # project-specific helper libraries
-import icu_config
-from icu_featurize_soln import get_raw_data
-from icu_tune_soln import make_pipeline_and_grid
+import soccer_config
+from soccer_featurize_soln import get_raw_data
+from soccer_tune_soln import make_pipeline_and_grid
 import preprocessors
 import classifiers
 

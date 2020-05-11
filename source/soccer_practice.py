@@ -26,7 +26,7 @@ from sklearn.model_selection import RepeatedStratifiedKFold, GridSearchCV
 from sklearn.pipeline import Pipeline
 
 # project-specific helper libraries
-import icu_config
+import soccer_config
 import tests
 
 
@@ -40,7 +40,7 @@ EPS = 10 * sys.float_info.epsilon
 
 NRECORDS = 100      # number of patient records
 FEATURES_TRAIN_FILENAME, LABELS_TRAIN_FILENAME = \
-    icu_config.get_filenames(nrecords=NRECORDS)
+    soccer_config.get_filenames(nrecords=NRECORDS)
 
 METRICS = ["accuracy", "auroc", "f1_score", "sensitivity", "specificity", "precision"] # sensitivity = recall
 

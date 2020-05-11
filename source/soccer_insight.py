@@ -24,8 +24,8 @@ from sklearn.utils import resample
 from sklearn.pipeline import Pipeline
 
 # project-specific helper libraries
-import icu_config
-from icu_practice import score, METRICS
+import soccer_config
+from soccer_practice import score, METRICS
 import classifiers
 
 
@@ -37,7 +37,7 @@ import classifiers
 NRECORDS = 2500     # number of patient records
 FEATURES_TRAIN_FILENAME, LABELS_TRAIN_FILENAME, \
     FEATURES_TEST_FILENAME, LABELS_TEST_FILENAME = \
-        icu_config.get_filenames(nrecords=NRECORDS, test_data=True)
+        soccer_config.get_filenames(nrecords=NRECORDS, test_data=True)
 
 
 
@@ -230,7 +230,7 @@ def main():
         # use the pipeline like any regular classifier
         # pipelines have already been refit on full training set using best found parameters
         # no need to retrain here
-        filename = os.path.join(icu_config.PICKLE_DIR, f'{clf_str}_soln.joblib')
+        filename = os.path.join(soccer_config.PICKLE_DIR, f'{clf_str}_soln.joblib')
         pipe = load(filename)
         
         # compute scores
@@ -280,7 +280,7 @@ def main():
     print('Evaluating feature importance...')
     
     clf_str = 'LinearSVM'
-    filename = os.path.join(icu_config.PICKLE_DIR, f'{clf_str}_soln.joblib')
+    filename = os.path.join(soccer_config.PICKLE_DIR, f'{clf_str}_soln.joblib')
     pipe = load(filename)
     
     feature_names = df_features_test.drop('RecordID', axis=1).columns.tolist()
